@@ -1,7 +1,10 @@
 package config
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 func GetServerPort() string {
-	return os.Getenv("SERVER_PORT")
+	return fmt.Sprintf(":%s", os.Getenv("SERVER_PORT"))
 }

@@ -6,13 +6,14 @@ import (
 	"log"
 	"workspace_booking/config"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+
 	_ "github.com/lib/pq"
 )
 
 func main() {
 
-	// connection string
 	psqlconn := config.GetDBConnectionURL()
 
 	println(psqlconn)
@@ -31,6 +32,11 @@ func main() {
 	fmt.Println("Connected!")
 
 	app := fiber.New()
+	app.Use(logger.New())
+
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World!")
+	})
 
 	println(config.GetServerPort())
 	log.Fatalln(app.Listen(config.GetServerPort()))
