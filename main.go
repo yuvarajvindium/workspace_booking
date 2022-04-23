@@ -1,32 +1,30 @@
 package main
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
 	"log"
 	"workspace_booking/config"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 func main() {
 
 	psqlconn := config.GetDBConnectionURL()
-
 	println(psqlconn)
+	db, err := pgxpool.Connect(context.Background(), psqlconn)
 
 	// open database
-	db, err := sql.Open("postgres", psqlconn)
 	CheckError(err)
 
 	// close database
 	defer db.Close()
 
 	// check db
-	err = db.Ping()
+	err = db.Ping(context.Background())
 	CheckError(err)
 
 	fmt.Println("Connected!")
