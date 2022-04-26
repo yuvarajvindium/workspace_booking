@@ -5,26 +5,20 @@ import (
 	"fmt"
 	"log"
 	"workspace_booking/config"
+	"workspace_booking/db"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 func main() {
 
-	psqlconn := config.GetDBConnectionURL()
-	println(psqlconn)
-	db, err := pgxpool.Connect(context.Background(), psqlconn)
-
-	// open database
-	CheckError(err)
-
+	dbPool := db.GetDbConnectionPool()
 	// close database
-	defer db.Close()
+	defer dbPool.Close()
 
 	// check db
-	err = db.Ping(context.Background())
+	err := dbPool.Ping(context.Background())
 	CheckError(err)
 
 	fmt.Println("Connected!")
@@ -33,7 +27,10 @@ func main() {
 	app.Use(logger.New())
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
+		u := db.User{}
+		users := u.GetUsers()
+		fmt.Println(users)
+		return c.JSON(users)
 	})
 
 	println(config.GetServerPort())
