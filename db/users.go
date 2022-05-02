@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"workspace_booking/services"
 )
 
 type User struct {
@@ -10,6 +11,56 @@ type User struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+func (u *User) Save() error {
+	password, err := services.HashPassword(u.Password)
+	if err != nil {
+		return err
+	}
+
+	u.Password = password
+
+	sql := `INSERT INTO users("id", "name", "email", "password") VALUES($1, $2, $3, $4)`
+	d, err := dbPool.Exec(context.Background(), sql, u.ID, u.Name, u.Email, u.Password)
+	fmt.Println(d)
+	return err
+}
+
+func (u *User) Update(id string) error {
+	sqlQueryParts := "SET "
+	i := 1
+	values := make([]interface{}, 0)
+
+	if u.Password != "" {
+		password, err := services.HashPassword(u.Password)
+		if err != nil {
+			return err
+		}
+
+		u.Password = password
+		sqlQueryParts += fmt.Sprintf(" password=$%d,", i)
+		i++
+		values = append(values, u.Password)
+	}
+
+	if u.Email != "" {
+		sqlQueryParts += fmt.Sprintf(" email = $%d,", i)
+		i++
+		values = append(values, u.Email)
+	}
+
+	if u.Name != "" {
+		sqlQueryParts += fmt.Sprintf(" name=$%d", i)
+		i++
+		values = append(values, u.Name)
+	}
+
+	sql := fmt.Sprintf("UPDATE users %s WHERE id='%s'", sqlQueryParts, id)
+	fmt.Println(sql)
+	d, err := dbPool.Exec(context.Background(), sql, values...)
+	fmt.Println(d)
+	return err
 }
 
 func (u *User) GetUsers() []User {

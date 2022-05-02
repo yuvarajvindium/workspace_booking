@@ -11,3 +11,6 @@ CREATE TABLE public.users
     PRIMARY KEY (id)
 );
 ```
+
+Luve run go
+`nodemon --exec go run main.go --signal SIGTERM`
