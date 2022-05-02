@@ -48,4 +48,19 @@ func initUserRoutes(apiApp fiber.Router) {
 		return c.JSON(u)
 	})
 
+	// Delete user by Id
+	apiApp.Delete("/users/:id", func(c *fiber.Ctx) error {
+		u := new(db.User)
+		id := c.Params("id")
+		if err := u.Delete(id); err != nil {
+			return err
+		}
+
+		res := map[string]string{
+			"message": "user with ID" + id + "has been deleted successfully",
+		}
+
+		return c.JSON(res)
+	})
+
 }

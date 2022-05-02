@@ -63,6 +63,13 @@ func (u *User) Update(id string) error {
 	return err
 }
 
+func (u *User) Delete(id string) error {
+	sql := "DELETE FROM users WHERE id=$1"
+	d, err := dbPool.Exec(context.Background(), sql, id)
+	fmt.Println(d)
+	return err
+}
+
 func (u *User) GetUsers() []User {
 	fmt.Println("Fetching")
 
