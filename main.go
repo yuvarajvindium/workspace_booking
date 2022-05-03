@@ -26,7 +26,7 @@ func main() {
 
 	app := fiber.New()
 	app.Use(logger.New())
-	routes.InitRoutes(app)
+	routes.SetupRoutes(app)
 
 	// app.Get("/", func(c *fiber.Ctx) error {
 	// 	u := db.User{}

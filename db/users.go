@@ -70,6 +70,26 @@ func (u *User) Delete(id string) error {
 	return err
 }
 
+func (u *User) GetUserByEmail(email string) *User {
+	var id string
+	var name string
+	var password string
+
+	row := dbPool.QueryRow(context.Background(), "SELECT * FROM users WHERE email=$1", email)
+	err := row.Scan(&name, &id, &email, &password)
+
+	if err != nil {
+		return nil
+	}
+
+	u.ID = id
+	u.Name = name
+	u.Email = email
+	u.Password = password
+
+	return u
+}
+
 func (u *User) GetUsers() []User {
 	fmt.Println("Fetching")
 

@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func initUserRoutes(apiApp fiber.Router) {
+func setupUserRoutes(apiApp fiber.Router) {
 	// Get the list of users // search
 	apiApp.Get("/users", func(c *fiber.Ctx) error {
 		u := db.User{}
