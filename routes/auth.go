@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"workspace_booking/db"
 	"workspace_booking/services"
 
@@ -37,6 +38,14 @@ func setupAuthRoutes(apiApp fiber.Router) {
 		if err != nil {
 			return c.JSON(map[string]string{"message": "Failed to login"})
 		}
+
+		// time.Sleep(time.Second * 5)
+		_, err = services.ValidateJWT(token)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		// fmt.Println(x)
 
 		return c.JSON(map[string]string{"token": token})
 	})

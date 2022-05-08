@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"time"
 	"workspace_booking/config"
 
 	"github.com/golang-jwt/jwt"
@@ -15,14 +16,17 @@ type JWTCustomClaims struct {
 var mySigningKey = []byte(config.GetJWTSecret())
 
 func GenerateJWT(userId string) (string, error) {
-	// Create the Claims
+	// Create te Claims
 	claims := JWTCustomClaims{
 		userId,
 		jwt.StandardClaims{
-			ExpiresAt: 15000,
+			IssuedAt:  time.Now().UnixMilli(),
+			ExpiresAt: time.Now().Add(time.Hour * 24).UnixMilli(),
 			Issuer:    "indium software",
 		},
 	}
+
+	// fmt.Println(claims)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(mySigningKey)
